@@ -1,80 +1,64 @@
 import React, { Component } from 'react';
 import './App.css';
-import Person from './Person/Person';
+import Validation from './Validation/Validation';
+import Char from './Char/Char';
 
 class App extends Component {
 
   state = {
-    
-    persons: [
-      {name: 'Max', age: 28},
-      {name: 'Manu', age: 29},
-      {name: 'Stephanie', age: 26}
-    ],
-    otherState: 'some other value'
+    userInput: ''
+
   }
 
-  switchNameHandler = (newName) => {
-    // console.log('Was Clicked');
-    // DON'T DO THIS: this.state.persons[0].name = 'Maxmilian';
-    this.setState(  {
-      persons: [
-        {name: newName, age: 28},
-        {name: 'Manu', age: 29},
-        {name: 'Stephanie', age: 27}
-      ]
-    } )
+  inputChangedHandler = (event) => {
+    this.setState({ userInput: event.target.value });
   }
 
-  nameChangedHandler = (event) => {
-    this.setState(  {
-      persons: [
-        {name: 'Max', age: 28},
-        {name: event.target.value, age: 29},
-        {name: 'Stephanie', age: 26}
-      ]
-    } )
+  deleteCharHandler = (index) => {
+    const text = this.state.userInput.split('');
+    text.splice(index,1);
+    const updatedText = text.join('');
+    this.setState({userInput: updatedText});
   }
-
 
   render() {
 
-    const style = {
+    const charList = this.state.userInput.split('').map((ch, index) => {
+      return <Char
+        character={ch}
+        key={index} 
+        clicked = { () => this.deleteCharHandler(index)}
+          />;
+    });
 
-      backgroundColor: 'white',
-      font: 'inherit',
-      border: '1px solid blue',
-      padding: '8px',
-      cursor: 'pointer'
-    };
-    
     return (
-
       <div className="App">
 
-        <h1>Hi, I'm a React App</h1>
-        <p>THis is really working!</p>
+        <ol>
+          <li>Create an input field (in App component) with a change listener which outputs the length of the entered text below it (e.g. in a paragraph).</li>
+          <li>Create a new component (=> ValidationComponent) which receives the text length as a prop</li>
+          <li>Inside the ValidationComponent, either output "Text too short" or "Text long enough" depending on the text length (e.g. take 5 as a minimum length)</li>
+          <li>Create another component (=> CharComponent) and style it as an inline box (=> display: inline-block, padding: 16px, text-align: center, margin: 16px, border: 1px solid black).</li>
+          <li>Render a list of CharComponents where each CharComponent receives a different letter of the entered text (in the initial input field) as a prop.</li>
+          <li>When you click a CharComponent, it should be removed from the entered text.</li>
+        </ol>
+        <p>Hint: Keep in mind that JavaScript strings are basically arrays!</p>
+        <hr />
 
-        <button 
-          style = {style}
-          onClick ={ () => this.switchNameHandler('Maximilian!!')}>Switch Name</button>
 
-        <Person 
-          name = {this.state.persons[0].name} 
-          age = {this.state.persons[0].age}/>
+        <input
+          type="text"
+          onChange={this.inputChangedHandler}
+          value={this.state.userInput}
+        />
 
-        <Person 
-          name = {this.state.persons[1].name} 
-          age = {this.state.persons[1].age}
-          click = {this.switchNameHandler.bind(this,'Max!')}
-          changed = {this.nameChangedHandler}>My Hobbies: Racing</Person>
+        <p>{this.state.userInput}</p>
 
-        <Person 
-          name = {this.state.persons[2].name} 
-          age = {this.state.persons[2].age}/>
+        <Validation inputLength={this.state.userInput.length} />
+        {charList}
 
       </div>
-      
+
     );
 
     //return React.createElement('div', {className: 'App'}, React.createElement('h1',null,'Does this work now?'));
